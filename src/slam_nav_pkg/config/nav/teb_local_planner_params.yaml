@@ -1,0 +1,79 @@
+TebLocalPlannerROS:
+
+  odom_topic: odom
+
+  # ========= 时间参数（稳定性提升）=========
+  teb_autosize: True
+  dt_ref: 0.3                # 加大采样间隔，末端更平滑
+  dt_hysteresis: 0.05
+  feasibility_check_no_poses: 3  # 更早判定不可行（避免贴障碍）
+
+  global_plan_overwrite_orientation: True
+  max_global_plan_lookahead_dist: 2.0
+
+  # ========= 运动（更稳，不冲）=========
+  max_vel_x: 0.20             # 进一步降低，减少过冲
+  max_vel_x_backwards: 0.2   # 基本禁止大幅倒车，避免被堵后倒车乱走
+  max_vel_theta: 0.6          # 降低角速度，提高稳定性
+
+  acc_lim_x: 0.25             # 降低加速度，减少冲刺
+  acc_lim_theta: 0.6
+
+  min_turning_radius: 0.0
+  cmd_angle_instead_rotvel: False
+  allow_init_with_backwards_motion: False  # 初始化轨迹时不采用倒车起步
+
+  # ========= footprint（减小以通过狭窄空间）=========
+  footprint_model:
+    type: "circular"
+    radius: 0.16              # 减小 footprint 半径，改善通过性
+
+  # ========= goal（解决"冲过头 + 不稳"）=========
+  xy_goal_tolerance: 0.08     # 收紧容差，末端精细控制
+  yaw_goal_tolerance: 0.10     # 收紧角度容差
+  latch_xy_goal_tolerance: True  # 防止反复进出目标点
+  free_goal_vel: False         # 目标点要求零速度，防止冲过头
+  min_samples: 5               # 最少采样点数，末端轨迹更平滑
+  trans_stopped_vel: 0.10      # 更快进入“已停稳”判定
+  rot_stopped_vel: 0.20        # 降低末端反复小角度调整
+
+  # ========= 障碍物（核心安全区）=========
+  min_obstacle_dist: 0.15     # 减小安全距离，让0.4m间隙可通过
+  inflation_dist: 0.18         # 匹配代价地图膨胀层
+
+  include_costmap_obstacles: True
+  costmap_obstacles_behind_robot_dist: 0.8
+  obstacle_poses_affected: 8  # 减少障碍物处理数量，提升速度
+
+  costmap_converter_plugin: ""
+
+  # ========= 优化（降低计算量）=========
+  no_inner_iterations: 3  # 减少迭代次数
+  no_outer_iterations: 2
+  penalty_epsilon: 0.1
+  shrink_horizon_backup: True       # 轨迹不可行时临时缩短时域，帮助从卡死状态恢复
+  shrink_horizon_min_duration: 8.0  # 保持一段时间再恢复完整时域，减少反复震荡
+
+  weight_max_vel_x: 2
+  weight_max_vel_theta: 1
+
+  weight_acc_lim_x: 1
+  weight_acc_lim_theta: 1
+
+  weight_kinematics_nh: 1000
+  weight_kinematics_forward_drive: 20  # 显著提高前进偏好，抑制倒车策略
+
+  weight_optimaltime: 0.8     # 降低时间权重，优先平滑性
+  weight_obstacle: 50           # 大幅提高障碍物权重，防止穿墙
+
+  # ========= 多路径（禁用可大幅提升速度）=========
+  enable_homotopy_class_planning: False  # 禁用多路径规划，大幅提升速度
+  enable_multithreading: True
+  max_number_classes: 1
+
+  selection_cost_hysteresis: 1.0
+  selection_obst_cost_scale: 1.0
+  selection_alternative_time_cost: False
+
+  roadmap_graph_no_samples: 15
+  roadmap_graph_area_width: 5

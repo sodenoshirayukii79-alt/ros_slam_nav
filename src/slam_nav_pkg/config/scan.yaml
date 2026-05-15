@@ -1,0 +1,23 @@
+# 激光扫描预处理参数
+
+# 各扇区半角（度）
+front_half_angle: 30.0
+back_half_angle: 30.0
+
+# 左右边界偏移（度）
+left_right_boundary: 10.0
+
+# 阻挡判定阈值（米）
+blocked_threshold: 0.5
+
+# 有效距离范围（米）
+min_valid_range: 0.05
+max_valid_range: 10.0
+
+# 危险距离上限与无穷替代值
+danger_max_dist: 1.0
+inf_substitute: 99.0
+
+# 平滑窗口大小与发布频率
+smoothing_window: 3
+publish_rate: 10.0

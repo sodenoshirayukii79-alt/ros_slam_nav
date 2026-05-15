@@ -1,0 +1,45 @@
+base_global_planner: global_planner/GlobalPlanner
+base_local_planner: teb_local_planner/TebLocalPlannerROS
+
+# ========== GlobalPlanner 配置（防止穿墙）=========
+GlobalPlanner:
+  lethal_cost: 100              # 致命代价值，禁止穿过
+  neutral_cost: 50              # 中性代价
+  cost_factor: 3.0              # 代价因子
+  publish_potential: true       # 发布潜在场
+  orientation_mode: 0           # 无方向模式
+  orientation_window_size: 1    # 方向窗口
+  old_navfn_behavior: false     # 不使用旧行为
+
+controller_frequency: 10.0      # 提高控制频率，使航点停止更平滑
+controller_patience: 5.0        # 减少耐心时间，更快触发recovery
+
+planner_frequency: 2.0           # 提高重规划频率
+planner_patience: 2.0           # 减少规划耐心，更快报告失败
+
+# 当所有路径被堵时，规划器应该报告失败而不是强行穿越
+allow_unknown: false            # 禁止穿过未知区域
+
+recovery_behavior_enabled: true
+clearing_rotation_allowed: true
+
+oscillation_timeout: 3.0         # 更早识别“卡住/来回抖动”
+oscillation_distance: 0.15       # 降低位移门槛，更灵敏检测振荡
+
+recovery_behaviors:
+  - name: conservative_reset
+    type: clear_costmap_recovery/ClearCostmapRecovery
+  - name: rotate_recovery
+    type: rotate_recovery/RotateRecovery
+  - name: aggressive_reset
+    type: clear_costmap_recovery/ClearCostmapRecovery
+  - name: rotate_recovery2
+    type: rotate_recovery/RotateRecovery
+
+conservative_reset:
+  reset_distance: 2.0
+  layer_names: ["obstacle_layer"]
+
+aggressive_reset:
+  reset_distance: 0.0
+  layer_names: ["obstacle_layer"]

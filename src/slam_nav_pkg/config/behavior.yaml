@@ -1,0 +1,34 @@
+# 速度仲裁层参数
+
+# 话题配置
+cmd_vel_nav_topic: /cmd_vel_nav
+cmd_vel_avoid_topic: /cmd_vel_avoid
+cmd_vel_recovery_topic: /cmd_vel_recovery
+cmd_vel_teleop_topic: /cmd_vel_teleop
+output_cmd_vel_topic: /cmd_vel
+scan_topic: /scan
+
+# 循环频率
+control_rate: 10.0
+
+# 前方激光提取
+front_half_angle: 30.0
+min_valid_range: 0.05
+max_valid_range: 10.0
+inf_substitute: 99.0
+
+# 安全仲裁（TEB 已负责避障，此处仅作紧急制动）
+safe_distance_far: 0.5
+safe_distance_warn: 0.35
+safe_distance_critical: 0.25
+warn_scale: 0.8
+critical_scale: 0.5
+
+# 加加速度限制 + 指数移动平均 + 死区（收紧以实现平滑目标停止）
+jerk_limit_linear: 0.05
+jerk_limit_angular: 0.15
+ema_alpha_linear: 0.35
+ema_alpha_angular: 0.35
+deadband_linear: 0.03
+deadband_angular: 0.05
+

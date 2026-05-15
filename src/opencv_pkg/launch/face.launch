@@ -1,0 +1,28 @@
+<launch>
+  <!-- ========== 参数 ========== -->
+  <arg name="image_topic"  default="/kinect2/qhd/image_color_rect"/>
+  <arg name="show_window"  default="true"/>
+  <arg name="cascade_path" default="/usr/share/opencv4/haarcascades/haarcascade_frontalface_default.xml"/>
+
+  <!--
+    前置条件：
+      导航模式下配合使用：roslaunch slam_nav_pkg bringup.launch mode:=nav
+      单独测试（生成人物）：roslaunch wpr_simulation wpr1_single_face.launch
+      单独测试（键盘移动）：rosrun wpr_simulation keyboard_vel_ctrl
+  -->
+
+  <!-- ========== 感知层：人脸识别 ========== -->
+  <!--
+    发布 /face_tracker/target (geometry_msgs/Point)
+      z > 0  → 检测到人脸，decision_node 收到后触发 AVOID
+      z == 0 → 无人脸
+    不发布速度，不需要 relay，直接接入导航决策层
+  -->
+  <node pkg="opencv_pkg" type="face_detector.py" name="face_detector" output="screen">
+    <param name="image_topic"  value="$(arg image_topic)"/>
+    <param name="cascade_path" value="$(arg cascade_path)"/>
+    <param name="show_window"  value="$(arg show_window)"/>
+    <param name="publish_rate" value="30.0"/>
+  </node>
+
+</launch>

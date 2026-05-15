@@ -1,0 +1,26 @@
+# 决策节点参数
+
+# 模式阈值
+threshold_avoid: 0.5
+threshold_recovery: 0.3
+
+# 防抖与节流
+debounce_time: 0.5
+reconfigure_throttle: 1.0
+
+# TEB 动态重配置目标命名空间
+teb_namespace: /move_base/TebLocalPlannerROS
+
+# 导航模式参数
+nav_max_vel_x: 0.50
+nav_min_obstacle_dist: 0.40
+nav_weight_obstacle: 50.0
+
+# 避障模式参数
+avoid_max_vel_x: 0.20
+avoid_min_obstacle_dist: 0.18
+avoid_weight_obstacle: 80.0
+
+# 恢复模式参数
+recovery_max_vel_x: 0.05
+recovery_weight_obstacle: 100.0

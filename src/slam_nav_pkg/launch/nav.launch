@@ -1,0 +1,57 @@
+<launch>
+
+  <!-- ========== 参数 ========== -->
+  <arg name="map_file"        default="$(find slam_nav_pkg)/maps/map.yaml"/>
+  <arg name="total_waypoints" default="4"/>
+
+  <!-- ========== 地图服务 ========== -->
+  <node pkg="map_server" type="map_server" name="map_server"
+        args="$(arg map_file)" output="screen"/>
+
+  <!-- ========== 定位 AMCL ========== -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <rosparam file="$(find slam_nav_pkg)/config/nav/amcl_params.yaml" command="load"/>
+  </node>
+
+  <!-- ========== 导航 move_base + TEB ========== -->
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+
+    <!-- costmap 公共参数：分别挂到两个命名空间 -->
+    <rosparam file="$(find slam_nav_pkg)/config/nav/costmap_common_params.yaml"
+              command="load" ns="global_costmap"/>
+    <rosparam file="$(find slam_nav_pkg)/config/nav/costmap_common_params.yaml"
+              command="load" ns="local_costmap"/>
+
+    <!-- costmap 各自参数 -->
+    <rosparam file="$(find slam_nav_pkg)/config/nav/global_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find slam_nav_pkg)/config/nav/local_costmap_params.yaml"  command="load"/>
+
+    <!-- TEB 局部规划器参数 -->
+    <rosparam file="$(find slam_nav_pkg)/config/nav/teb_local_planner_params.yaml" command="load"/>
+
+    <!-- move_base 全局参数（含 base_global/local_planner、频率、recovery） -->
+    <rosparam file="$(find slam_nav_pkg)/config/nav/move_base_params.yaml" command="load"/>
+
+    <!-- move_base velocity intent -->
+    <remap from="cmd_vel" to="/cmd_vel_nav"/>
+
+  </node>
+
+  <!-- ========== 航点系统 ========== -->
+  <node pkg="waterplus_map_tools" type="wp_navi_server" name="wp_navi_server" output="screen"/>
+  <node pkg="waterplus_map_tools" type="wp_manager"     name="wp_manager"     output="screen"/>
+
+  <!-- 任务调度节点 -->
+  <node pkg="slam_nav_pkg" type="wp_node" name="wp_node" output="screen">
+    <param name="max_waypoints" value="$(arg total_waypoints)"/>
+    <param name="current_wp_start" value="1"/>
+  </node>
+
+  <!-- 航点配置提示 -->
+  <node pkg="rostopic" type="rostopic" name="wp_echo" args="echo /waterplus/navi_waypoint" output="screen" if="false"/>
+
+  <!-- 障碍物可视化 -->
+  <node pkg="slam_nav_pkg" type="obstacle_marker.py" name="obstacle_marker" output="screen"/>
+
+
+</launch>

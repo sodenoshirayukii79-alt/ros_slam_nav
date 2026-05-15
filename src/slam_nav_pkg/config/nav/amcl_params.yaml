@@ -1,0 +1,53 @@
+# amcl_params.yaml
+# 适用于 Gazebo 差速小车 + 2D 激光雷达
+# 坐标系：map -> odom -> base_link -> laser_link
+
+# ========== 整体滤波器 ==========
+min_particles: 500          # 粒子数下限，太少定位会抖
+max_particles: 2000         # 粒子数上限，Gazebo 仿真 2000 够用，真车可加到 5000
+kld_err: 0.05               # KLD 采样误差上限
+kld_z: 0.99                 # KLD 置信度
+update_min_d: 0.2           # 移动多少米触发一次滤波更新
+update_min_a: 0.5           # 转动多少弧度触发一次滤波更新（约 28°）
+resample_interval: 1        # 每次更新都重采样
+recovery_alpha_slow: 0.001  # 慢速平均权重衰减，用于检测定位失效
+recovery_alpha_fast: 0.1    # 快速平均权重衰减
+gui_publish_rate: 5.0       # rviz 可视化粒子云发布频率
+save_pose_rate: 0.5         # 定期保存位姿到参数服务器的频率
+
+# ========== 坐标系 ==========
+odom_frame_id:   odom
+base_frame_id:   base_footprint
+global_frame_id: map
+tf_broadcast:    true       # 发布 map->odom 的 tf
+
+# ========== 里程计模型（差速）==========
+odom_model_type: diff-corrected   # diff-corrected 比 diff 更准
+odom_alpha1: 0.2    # 旋转引起的旋转噪声，Gazebo 轮子打滑少可调小
+odom_alpha2: 0.2    # 平移引起的旋转噪声
+odom_alpha3: 0.1    # 平移引起的平移噪声
+odom_alpha4: 0.1    # 旋转引起的平移噪声
+# odom_alpha5 只在 omni 模型下有效，diff 不需要
+
+# ========== 激光模型 ==========
+laser_model_type:       likelihood_field   # 比 beam 模型快，Gazebo 下效果更好
+laser_max_beams:        60                 # 每次更新使用的激光束数，降低计算量
+laser_max_range:        8.0                # 激光最大有效距离，和雷达参数对齐
+laser_min_range:        0.15               # 最小有效距离，过滤底盘遮挡
+laser_z_hit:            0.95               # 击中概率权重
+laser_z_short:          0.1                # 短程误读权重
+laser_z_max:            0.05               # 最大量程概率权重
+laser_z_rand:           0.05               # 随机噪声权重
+laser_sigma_hit:        0.2                # 击中模型高斯标准差（米）
+laser_lambda_short:     0.1                # 短程指数分布参数
+likelihood_field_dsmax: 2.0                # likelihood_field 最大障碍物距离
+
+# ========== 初始位姿 ==========
+# Gazebo 启动时机器人默认在原点，如果你的地图原点和 Gazebo 世界原点对齐则不用改
+initial_pose_x:  0.0
+initial_pose_y:  0.0
+initial_pose_a:  0.0        # 初始朝向（弧度）
+initial_cov_xx:  0.25       # 初始位置 x 方差（0.5m 不确定度）
+initial_cov_yy:  0.25       # 初始位置 y 方差
+initial_cov_aa:  0.0685     # 初始角度方差（约 ±15°）
+transform_tolerance: 0.5   # 默认是 0.1，提高容忍度

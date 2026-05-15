@@ -1,0 +1,46 @@
+# costmap_common_params.yaml
+# Noetic 格式，同时 load 到 global_costmap 和 local_costmap
+
+# ========== 机器人外形（footprint 比 robot_radius 更精确）==========
+footprint: [[-0.18,-0.13], [-0.18,0.13], [0.18,0.13], [0.18,-0.13]]
+footprint_padding: 0.01
+
+# ========== 障碍物层 ==========
+obstacle_layer:
+  enabled: true
+  obstacle_range: 3.0
+  raytrace_range: 5.0
+  observation_sources: base_lidar 
+  base_lidar:
+    sensor_frame: laser
+    data_type: LaserScan
+    topic: /scan
+    marking: true
+    clearing: true
+    obstacle_range: 3.0
+    raytrace_range: 5.0
+    inf_is_valid: false
+    observation_persistence: 0.5   # 0.5s 无新观测自动清除，解决临时障碍物残留
+
+
+
+# ========== 静态层 ==========
+static_layer:
+  enabled: true
+  map_topic: /map
+  subscribe_to_updates: true
+  lethal_cost_threshold: 100
+  unknown_cost_value: -1
+  track_unknown_space: true
+  trinary_costmap: true
+
+# ========== 膨胀层 ==========
+# inflation_radius 必须大于 TEB 的 min_obstacle_dist(0.15)
+# 尽量小，给窄通道留空间
+inflation_layer:
+  enabled: true
+  inflation_radius: 0.20
+  cost_scaling_factor: 5.0
+
+
+

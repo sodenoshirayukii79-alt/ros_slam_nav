@@ -1,0 +1,25 @@
+<launch>
+  <!-- ========== 参数 ========== -->
+  <arg name="target_color" default="red"  doc="调参用初始色相范围提示：red=10~40 / green=40~80 / blue=100~130"/>
+  <arg name="show_window"  default="true" doc="是否显示 Threshold / RGB / HSV / Result 窗口"/>
+  <arg name="image_topic"  default="/kinect2/qhd/image_color_rect"/>
+
+  <!-- ========== 感知层：颜色识别 ========== -->
+  <!-- 订阅相机图像，发布 /ball_tracker/target 和 /ball_tracker/image  -->
+  <node pkg="opencv_pkg" type="color_detector.py" name="color_detector" output="screen">
+    <param name="image_topic"  value="$(arg image_topic)"/>
+    <param name="show_window"  value="$(arg show_window)"/>
+    <param name="publish_rate" value="30.0"/>
+  </node>
+
+  <!-- ========== 控制层：颜色跟随 ========== -->
+  <!-- 订阅 /ball_tracker/target，发布 /cmd_vel_follow               -->
+  <node pkg="opencv_pkg" type="color_follower.py" name="color_follower" output="screen"/>
+
+  <!-- ========== 速度中继 ========== -->
+  <!-- /cmd_vel_follow → /cmd_vel（视觉系统独立运行时使用）           -->
+  <!-- 与导航系统同时运行时注释掉此节点，/cmd_vel 由 behavior_layer 管理 -->
+  <node pkg="topic_tools" type="relay" name="cmd_vel_relay"
+        args="/cmd_vel_follow /cmd_vel" output="screen"/>
+
+</launch>

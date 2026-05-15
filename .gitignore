@@ -1,0 +1,25 @@
+# ROS 编译产物
+build/
+devel/
+logs/
+.catkin_workspace
+.catkin_tools/
+
+# 第三方依赖包
+src/waterplus_map_tools/
+src/wpb_home/
+src/wpr_simulation/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*~
+
+# 系统
+.DS_Store

@@ -1,0 +1,15 @@
+<!--
+  ============================================================================
+  gmapping.launch — 仅 SLAM（slam_gmapping）
+  ============================================================================
+  职责：
+    - 运行 slam_gmapping，发布 map→odom，订阅激光与里程计（由上层平台提供）
+  禁止：RViz、Gazebo、robot_state_publisher、机器人模型/整机 bringup。
+  前置：由 bringup.launch 先启动仿真或实体机，保证 scan、odom、TF 可用。
+-->
+<launch>
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <param name="map_update_interval" value="0.5"/>
+    <param name="linearUpdate" value="0.1"/>
+  </node>
+</launch>
