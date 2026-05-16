@@ -56,6 +56,19 @@ graph TD
 
 ---
 
+## 演示视频
+
+| 功能 | 视频链接 |
+|------|----------|
+| SLAM 建图 | [▶ 点击观看](https://www.bilibili.com/video/BV1Un5q6sEnS) |
+| 自主导航 | [▶ 点击观看](https://www.bilibili.com/video/BV1MH5q69EE5) |
+| 颜色追踪 | [▶ 点击观看](https://www.bilibili.com/video/BV1GGL36ZEmg) |
+| 人脸识别 | [▶ 点击观看](https://www.bilibili.com/video/BV1VGL36ZEtM) |
+
+> 人脸识别节点（`face_detector.py`）已完成开发并通过单独测试，接口已接入 `decision_node` 决策层，检测到人脸时自动触发 AVOID 减速。导航地图中暂未加入人物模型，完整联调视频待补充。
+
+---
+
 ## 项目结构
 
 ```
